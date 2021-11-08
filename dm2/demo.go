@@ -1,6 +1,7 @@
 package dm2
 
 import (
+	//"encoding/hex"
 	"fmt"
 	"os"
 
@@ -27,7 +28,7 @@ func CloseDemo(f *os.File) {
 	f.Close()
 }
 
-func NextLump(f *os.File, pos int64) []byte {
+func NextLump(f *os.File, pos int64) ([]byte, int) {
 	_, err := f.Seek(pos, 0)
 	check(err)
 
@@ -35,18 +36,43 @@ func NextLump(f *os.File, pos int64) []byte {
 	_, err = f.Read(len)
 	check(err)
 
+	//fmt.Printf("%s\n", hex.Dump(len))
+
 	lenbuf := msg.MessageBuffer{Buffer: len, Index: 0}
 	length := msg.ReadLong(&lenbuf)
 	if length == -1 {
-		return []byte{}
+		return []byte{}, 0
 	}
 
+	fmt.Printf("Lump position: %d, length: %d\n", pos, length)
 	_, err = f.Seek(pos+4, 0)
 	check(err)
 
 	lump := make([]byte, length)
-	_, err = f.Read(lump)
+	read, err := f.Read(lump)
 	check(err)
 
-	return lump
+	return lump, read+4
+}
+
+func ParseLump(lump []byte) {
+	buf := msg.MessageBuffer{Buffer:lump}
+
+	for buf.Index < len(buf.Buffer) {
+		cmd := msg.ReadByte(&buf)
+
+		switch (cmd) {
+		case msg.SVCServerData:
+			s := msg.ParseServerData(&buf)
+			fmt.Println(s)
+
+		case msg.SVCConfigString:
+			cs := msg.ParseConfigString(&buf)
+			fmt.Println(cs)
+
+		case msg.SVCSpawnBaseline:
+			bl := msg.ParseSpawnBaseline(&buf)
+			fmt.Println(bl)
+		}
+	}
 }

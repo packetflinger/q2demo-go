@@ -12,13 +12,15 @@ func main() {
 	demofile := dm2.OpenDemo("test.dm2")
 
 	for {
-		lump := dm2.NextLump((demofile), int64(position))
-		if len(lump) == 0 {
-			break
+		lump, size := dm2.NextLump(demofile, int64(position))
+		if size == 0 {
+			break;
 		}
 
-		position += len(lump)
 		fmt.Printf("%s\n", hex.Dump(lump))
+		position += size
+
+		dm2.ParseLump(lump)
 	}
 
 	dm2.CloseDemo(demofile)
