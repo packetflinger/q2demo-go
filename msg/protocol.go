@@ -161,6 +161,12 @@ func ReadByte(msg *MessageBuffer) byte {
     return val
 }
 
+func ReadChar(msg *MessageBuffer) int8 {
+	val := int8(msg.Buffer[msg.Index])
+    msg.Index++
+    return val
+}
+
 func ReadWord(msg *MessageBuffer) int16 {
 	var tmp struct {
         Value int16
