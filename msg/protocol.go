@@ -70,6 +70,29 @@ const (
 	EntitySolid			= 1<<27
 )
 
+const (
+	PlayerType			= 1<<0
+	PlayerOrigin		= 1<<1
+	PlayerVelocity		= 1<<2
+	PlayerTime			= 1<<3
+	PlayerFlags			= 1<<4
+	PlayerGravity		= 1<<5
+	PlayerDeltaAngles	= 1<<6
+	PlayerViewOffset	= 1<<7
+
+	PlayerViewAngles	= 1<<8
+	PlayerKickAngles	= 1<<9
+	PlayerBlend			= 1<<10
+	PlayerFOV			= 1<<11
+	PlayerWeaponIndex	= 1<<12
+	PlayerWeaponFrame	= 1<<13
+	PlayerRDFlags		= 1<<14
+	PlayerReserved		= 1<<15
+	
+	PlayerBits			= 16
+	PlayerMask			= (1<<PlayerBits)-1
+)
+
 func ReadLong(msg *MessageBuffer) int32 {
 	var tmp struct {
 		Value int32
