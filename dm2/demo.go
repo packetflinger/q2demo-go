@@ -73,6 +73,10 @@ func ParseLump(lump []byte) {
 		case msg.SVCSpawnBaseline:
 			bl := msg.ParseSpawnBaseline(&buf)
 			fmt.Println(bl)
+
+		case msg.SVCStuffText:
+			st := msg.ParseStuffText(&buf)
+			fmt.Println(st)
 		}
 	}
 }

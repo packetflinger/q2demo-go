@@ -28,6 +28,10 @@ type ConfigString struct {
     String string
 }
 
+type StuffText struct {
+    String string
+}
+
 type PackedEntity struct {
     Number      uint32
     Origin      [3]int16
@@ -203,6 +207,11 @@ func ParseEntity(m *MessageBuffer, from PackedEntity, num uint16, bits uint32) P
     if bits & EntitySolid != 0 {
         to.Solid = uint32(ReadWord(m))
     }
-    
+
     return to
+}
+
+func ParseStuffText(m *MessageBuffer) StuffText {
+    str := StuffText{String: ReadString(m)}
+    return str
 }
