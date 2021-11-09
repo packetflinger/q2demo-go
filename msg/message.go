@@ -273,7 +273,7 @@ func ParsePlayerstate(m *MessageBuffer) PackedPlayer {
     ps := PackedPlayer{}
     
     if bits & PlayerType != 0 {
-        pm.Type = int8(ReadByte(m))
+        pm.Type = uint8(ReadByte(m))
     }
 
     if bits & PlayerOrigin != 0 {
@@ -313,17 +313,17 @@ func ParsePlayerstate(m *MessageBuffer) PackedPlayer {
     }
 
     if bits & PlayerViewAngles != 0 {
-        pm.ViewAngles[0] = int16(ReadShort(m))
-        pm.ViewAngles[1] = int16(ReadShort(m))
-        pm.ViewAngles[2] = int16(ReadShort(m))
+        ps.ViewAngles[0] = int16(ReadShort(m))
+        ps.ViewAngles[1] = int16(ReadShort(m))
+        ps.ViewAngles[2] = int16(ReadShort(m))
     }
 
     if bits & PlayerWeaponIndex != 0 {
-        ps.GunIndex = int8(ReadByte(m))
+        ps.GunIndex = uint8(ReadByte(m))
     }
 
     if bits & PlayerWeaponFrame != 0 {
-        ps.GunFrame = int8(ReadByte(m))
+        ps.GunFrame = uint8(ReadByte(m))
         ps.GunOffset[0] = int8(ReadChar(m))
         ps.GunOffset[1] = int8(ReadChar(m))
         ps.GunOffset[2] = int8(ReadChar(m))
@@ -333,26 +333,28 @@ func ParsePlayerstate(m *MessageBuffer) PackedPlayer {
     }
 
     if bits & PlayerBlend != 0 {
-        ps.Blend[0] = int8(ReadChar(m))
-        ps.Blend[1] = int8(ReadChar(m))
-        ps.Blend[2] = int8(ReadChar(m))
-        ps.Blend[3] = int8(ReadChar(m))
+        ps.Blend[0] = uint8(ReadChar(m))
+        ps.Blend[1] = uint8(ReadChar(m))
+        ps.Blend[2] = uint8(ReadChar(m))
+        ps.Blend[3] = uint8(ReadChar(m))
     }
 
     if bits & PlayerFOV != 0 {
-        ps.FOV = int8(ReadByte(m))
+        ps.FOV = uint8(ReadByte(m))
     }
 
     if bits & PlayerRDFlags != 0 {
-        ps.RDFlags = int8(ReadByte(m))
+        ps.RDFlags = uint8(ReadByte(m))
     }
 
     statbits := int32(ReadLong(m))
     for i:=0; i<32; i++ {
         if statbits & (1<<i) != 0 {
-            ps.Stats[i] = uint16(ReadShort(m))
+            ps.Stats[i] = int16(ReadShort(m))
         }
     }
 
-    ps.PlayerMoveState = pm
+    ps.PlayerMove = pm
+
+    return ps
 }
