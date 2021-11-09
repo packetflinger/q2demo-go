@@ -50,6 +50,31 @@ type PackedEntity struct {
     Event       uint8
 }
 
+type PMoveState struct {
+    Type        uint8
+    Origin      [3]int16
+    Velocity    [3]int16
+    Flags       byte
+    Time        byte
+    Gravity     int16
+    DeltaAngles [3]int16
+}
+
+type PackedPlayer struct {
+    PlayerMove  PMoveState  
+    ViewAngles  [3]int16
+    ViewOffset  [3]int8
+    KickAngles  [3]int8
+    GunAngles   [3]int8
+    GunOffset   [3]int8
+    GunIndecx   uint8
+    GunFrame    uint8
+    Blend       [4]uint8
+    FOV         uint8
+    RDFlags     uint8
+    Stats       [32]int16
+}
+
 type Frame struct {
     Number      int32
     Delta       int32
@@ -240,4 +265,8 @@ func ParseFrame(m *MessageBuffer) Frame {
     }
 
     return fr
+}
+
+func ParsePlayerstate(m *MessageBuffer) PackedPlayer {
+
 }
