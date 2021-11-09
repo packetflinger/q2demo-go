@@ -83,6 +83,11 @@ type Frame struct {
     AreaBits    []byte
 }
 
+type Print struct {
+    Level  uint8
+    String string
+}
+
 
 func ParseServerData(m *MessageBuffer) ServerData {
     sd := ServerData{}
@@ -374,4 +379,13 @@ func ParsePacketEntities(m *MessageBuffer) []PackedEntity{
     }
 
     return ents
+}
+
+func ParsePrint(m *MessageBuffer) Print {
+    st := Print{
+        Level: uint8(ReadByte(m)),
+        String: ReadString(m),
+    }
+
+    return st
 }

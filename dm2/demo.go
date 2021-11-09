@@ -89,6 +89,10 @@ func ParseLump(lump []byte) {
 		case msg.SVCPacketEntities:
 			ents := msg.ParsePacketEntities(&buf)
 			fmt.Println(ents)
+
+		case msg.SVCPrint:
+			pr := msg.ParsePrint(&buf)
+			fmt.Println(pr)
 		}
 	}
 }
