@@ -77,6 +77,10 @@ func ParseLump(lump []byte) {
 		case msg.SVCStuffText:
 			st := msg.ParseStuffText(&buf)
 			fmt.Println(st)
+
+		case msg.SVCFrame:
+			fr := msg.ParseFrame(&buf)
+			fmt.Println(fr)
 		}
 	}
 }

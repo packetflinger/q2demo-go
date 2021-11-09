@@ -50,6 +50,14 @@ type PackedEntity struct {
     Event       uint8
 }
 
+type Frame struct {
+    Number      int32
+    Delta       int32
+    Suppressed  int8
+    AreaBytes   int8
+    AreaBits    []byte
+}
+
 
 func ParseServerData(m *MessageBuffer) ServerData {
     sd := ServerData{}
@@ -214,4 +222,22 @@ func ParseEntity(m *MessageBuffer, from PackedEntity, num uint16, bits uint32) P
 func ParseStuffText(m *MessageBuffer) StuffText {
     str := StuffText{String: ReadString(m)}
     return str
+}
+
+func ParseFrame(m *MessageBuffer) Frame {
+    N := int32(ReadLong(m))
+    D := int32(ReadLong(m))
+    S := int8(ReadByte(m))
+    A := int8(ReadByte(m))
+    Ab := ReadData(m, int(A))
+    
+    fr := Frame{
+        Number: N,
+        Delta: D,
+        Suppressed: S,
+        AreaBytes: A,
+        AreaBits: Ab,
+    }
+
+    return fr
 }
