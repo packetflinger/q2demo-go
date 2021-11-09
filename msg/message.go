@@ -50,7 +50,7 @@ type PackedEntity struct {
     Event       uint8
 }
 
-type PMoveState struct {
+type PlayerMoveState struct {
     Type        uint8
     Origin      [3]int16
     Velocity    [3]int16
@@ -61,13 +61,13 @@ type PMoveState struct {
 }
 
 type PackedPlayer struct {
-    PlayerMove  PMoveState  
+    PlayerMove  PlayerMoveState  
     ViewAngles  [3]int16
     ViewOffset  [3]int8
     KickAngles  [3]int8
     GunAngles   [3]int8
     GunOffset   [3]int8
-    GunIndecx   uint8
+    GunIndex    uint8
     GunFrame    uint8
     Blend       [4]uint8
     FOV         uint8
@@ -268,5 +268,91 @@ func ParseFrame(m *MessageBuffer) Frame {
 }
 
 func ParsePlayerstate(m *MessageBuffer) PackedPlayer {
+    bits := ReadWord(m)
+    pm := PlayerMoveState{}
+    ps := PackedPlayer{}
+    
+    if bits & PlayerType != 0 {
+        pm.Type = int8(ReadByte(m))
+    }
 
+    if bits & PlayerOrigin != 0 {
+        pm.Origin[0] = int16(ReadShort(m))
+        pm.Origin[1] = int16(ReadShort(m))
+        pm.Origin[2] = int16(ReadShort(m))
+    }
+
+    if bits & PlayerVelocity != 0 {
+        pm.Velocity[0] = int16(ReadShort(m))
+        pm.Velocity[1] = int16(ReadShort(m))
+        pm.Velocity[2] = int16(ReadShort(m))
+    }
+
+    if bits & PlayerTime != 0 {
+        pm.Time = ReadByte(m)
+    }
+
+    if bits & PlayerFlags != 0 {
+        pm.Flags = ReadByte(m)
+    }
+
+    if bits & PlayerGravity != 0 {
+        pm.Gravity = int16(ReadShort(m))
+    }
+
+    if bits & PlayerDeltaAngles != 0 {
+        pm.DeltaAngles[0] = int16(ReadShort(m))
+        pm.DeltaAngles[1] = int16(ReadShort(m))
+        pm.DeltaAngles[2] = int16(ReadShort(m))
+    }
+
+    if bits & PlayerViewOffset != 0 {
+        ps.ViewOffset[0] = int8(ReadChar(m))
+        ps.ViewOffset[1] = int8(ReadChar(m))
+        ps.ViewOffset[2] = int8(ReadChar(m))
+    }
+
+    if bits & PlayerViewAngles != 0 {
+        pm.ViewAngles[0] = int16(ReadShort(m))
+        pm.ViewAngles[1] = int16(ReadShort(m))
+        pm.ViewAngles[2] = int16(ReadShort(m))
+    }
+
+    if bits & PlayerWeaponIndex != 0 {
+        ps.GunIndex = int8(ReadByte(m))
+    }
+
+    if bits & PlayerWeaponFrame != 0 {
+        ps.GunFrame = int8(ReadByte(m))
+        ps.GunOffset[0] = int8(ReadChar(m))
+        ps.GunOffset[1] = int8(ReadChar(m))
+        ps.GunOffset[2] = int8(ReadChar(m))
+        ps.GunAngles[0] = int8(ReadChar(m))
+        ps.GunAngles[1] = int8(ReadChar(m))
+        ps.GunAngles[2] = int8(ReadChar(m))
+    }
+
+    if bits & PlayerBlend != 0 {
+        ps.Blend[0] = int8(ReadChar(m))
+        ps.Blend[1] = int8(ReadChar(m))
+        ps.Blend[2] = int8(ReadChar(m))
+        ps.Blend[3] = int8(ReadChar(m))
+    }
+
+    if bits & PlayerFOV != 0 {
+        ps.FOV = int8(ReadByte(m))
+    }
+
+    if bits & PlayerRDFlags != 0 {
+        ps.RDFlags = int8(ReadByte(m))
+    }
+
+    statbits := int32(ReadLong(m))
+    for i:=0; i<32; i++ {
+        if statbits & (1<<i) != 0 {
+            ps.Stats[i] = uint16(ReadShort(m))
+        }
+    }
+
+    ps.PlayerMoveState = pm
 }
