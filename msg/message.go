@@ -358,3 +358,20 @@ func ParsePlayerstate(m *MessageBuffer) PackedPlayer {
 
     return ps
 }
+
+func ParsePacketEntities(m *MessageBuffer) []PackedEntity{
+    ents := []PackedEntity{}
+    for {
+        bits := ParseEntityBitmask(m)
+        num := ParseEntityNumber(m, bits)
+
+        if num <= 0 {
+            break
+        }
+
+        entity := ParseEntity(m, PackedEntity{}, num, bits)
+        ents = append(ents, entity)
+    }
+
+    return ents
+}
