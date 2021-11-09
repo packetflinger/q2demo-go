@@ -81,6 +81,10 @@ func ParseLump(lump []byte) {
 		case msg.SVCFrame:
 			fr := msg.ParseFrame(&buf)
 			fmt.Println(fr)
+
+		case msg.SVCPlayerInfo:
+			ps := msg.ParsePlayerstate(&buf)
+			fmt.Println(ps)
 		}
 	}
 }
