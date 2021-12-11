@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/hex"
 	"fmt"
 	"os"
 
@@ -14,20 +13,7 @@ func main() {
 		return
 	}
 
-	position := 0
-	demofile := dm2.OpenDemo(os.Args[1])
-
-	for {
-		lump, size := dm2.NextLump(demofile, int64(position))
-		if size == 0 {
-			break
-		}
-
-		fmt.Printf("%s\n", hex.Dump(lump))
-		position += size
-
-		dm2.ParseLump(lump)
-	}
-
-	dm2.CloseDemo(demofile)
+	demo := dm2.DemoFile{}
+	dm2.ParseDemo(os.Args[1], &demo)
+	fmt.Printf("Map: %s (%s)\n", demo.Serverdata.MapName, demo.Configstrings[33].String)
 }
