@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-
-	"github.com/packetflinger/q2demo/dm2"
 )
 
 func main() {
@@ -13,7 +11,8 @@ func main() {
 		return
 	}
 
-	demo := dm2.DemoFile{}
-	dm2.ParseDemo(os.Args[1], &demo)
+	demo := DemoFile{}
+	ParseDemo(os.Args[1], &demo)
 	fmt.Printf("Map: %s (%s)\n", demo.Serverdata.MapName, demo.Configstrings[33].String)
+	fmt.Printf("Frames: %d\n", len(demo.Frames))
 }

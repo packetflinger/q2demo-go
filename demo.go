@@ -1,27 +1,38 @@
-package dm2
+package main
 
 import (
 	//"encoding/hex"
 
 	"fmt"
 	"os"
-
-	"github.com/packetflinger/q2demo/msg"
 )
+
+var currentframe *ServerFrame
+var previousframe *ServerFrame
 
 const (
 	MaxConfigStrings = 2080
 	MaxEntities      = 1024
 )
 
+type ServerFrame struct {
+	Frame       FrameMsg
+	Playerstate PackedPlayer
+	Entities    [MaxEntities]PackedEntity
+	Strings     []ConfigString
+	Prints      []Print
+	Stuffs      []StuffText
+}
+
 /**
  * A structure to store a parsed (packed) demo file
  */
 type DemoFile struct {
 	ParsingFrames bool
-	Serverdata    msg.ServerData
-	Configstrings [MaxConfigStrings]msg.ConfigString
-	Baselines     [MaxEntities]msg.PackedEntity
+	Serverdata    ServerData
+	Configstrings [MaxConfigStrings]ConfigString
+	Baselines     [MaxEntities]PackedEntity
+	Frames        []ServerFrame
 }
 
 var Demo DemoFile
@@ -55,8 +66,8 @@ func NextLump(f *os.File, pos int64) ([]byte, int) {
 
 	//fmt.Printf("%s\n", hex.Dump(len))
 
-	lenbuf := msg.MessageBuffer{Buffer: len, Index: 0}
-	length := msg.ReadLong(&lenbuf)
+	lenbuf := MessageBuffer{Buffer: len, Index: 0}
+	length := ReadLong(&lenbuf)
 	if length == -1 {
 		return []byte{}, 0
 	}
@@ -73,53 +84,57 @@ func NextLump(f *os.File, pos int64) ([]byte, int) {
 }
 
 func ParseLump(lump []byte, demo *DemoFile) {
-	buf := msg.MessageBuffer{Buffer: lump}
+	buf := MessageBuffer{Buffer: lump}
 
 	for buf.Index < len(buf.Buffer) {
-		cmd := msg.ReadByte(&buf)
+		cmd := ReadByte(&buf)
 
 		switch cmd {
-		case msg.SVCServerData:
-			s := msg.ParseServerData(&buf)
+		case SVCServerData:
+			s := ParseServerData(&buf)
 			demo.Serverdata = s
-			//fmt.Println(d)
-			//fmt.Println(s)
 
-		case msg.SVCConfigString:
-			cs := msg.ParseConfigString(&buf)
+		case SVCConfigString:
+			cs := ParseConfigString(&buf)
 			if !demo.ParsingFrames {
 				demo.Configstrings[cs.Index] = cs
+			} else {
+				currentframe.Strings = append(currentframe.Strings, cs)
 			}
-			//fmt.Println(cs)
 
-		case msg.SVCSpawnBaseline:
-			_ = msg.ParseSpawnBaseline(&buf)
-			//fmt.Println(bl)
+		case SVCSpawnBaseline:
+			bl := ParseSpawnBaseline(&buf)
+			demo.Baselines[bl.Number] = bl
 
-		case msg.SVCStuffText:
-			st := msg.ParseStuffText(&buf)
+		case SVCStuffText:
+			st := ParseStuffText(&buf)
 			// a "precache" stuff is the delimiter between header data
 			// and frames
 			if st.String == "precache\n" {
 				demo.ParsingFrames = true
 			}
-			//fmt.Println(st)
 
-		case msg.SVCFrame:
-			_ = msg.ParseFrame(&buf)
-			//fmt.Println(fr)
+		case SVCFrame:
+			fr := ParseFrame(&buf)
+			demo.Frames = append(demo.Frames, ServerFrame{})
+			if currentframe != nil {
+				previousframe = currentframe
+			}
+			currentframe = &demo.Frames[len(demo.Frames)-1]
+			currentframe.Frame = fr
 
-		case msg.SVCPlayerInfo:
-			_ = msg.ParsePlayerstate(&buf)
-			//fmt.Println(ps)
+		case SVCPlayerInfo:
+			ps := ParseDeltaPlayerstate(&buf)
+			currentframe.Playerstate = ps
 
-		case msg.SVCPacketEntities:
-			_ = msg.ParsePacketEntities(&buf)
-			//fmt.Println(ents)
+		case SVCPacketEntities:
+			ents := ParsePacketEntities(&buf)
+			for _, e := range ents {
+				currentframe.Entities[e.Number] = e
+			}
 
-		case msg.SVCPrint:
-			_ = msg.ParsePrint(&buf)
-			//fmt.Println(pr)
+		case SVCPrint:
+			_ = ParsePrint(&buf)
 		}
 	}
 }
