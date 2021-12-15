@@ -122,6 +122,8 @@ func ParseLump(lump []byte, demo *DemoFile) {
 			}
 			currentframe = &demo.Frames[len(demo.Frames)-1]
 			currentframe.Frame = fr
+			currentframe.Playerstate = previousframe.Playerstate
+			currentframe.Entities = previousframe.Entities
 
 		case SVCPlayerInfo:
 			ps := ParseDeltaPlayerstate(&buf)
