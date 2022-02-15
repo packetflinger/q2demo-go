@@ -143,7 +143,7 @@ func ParseLump(lump []byte, demo *DemoFile) {
 	}
 }
 
-func ParseDemo(filename string, demo *DemoFile) {
+func (demo *DemoFile) ParseDemo(filename string) {
 	position := 0
 	demofile := OpenDemo(filename)
 

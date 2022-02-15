@@ -12,7 +12,7 @@ func main() {
 	}
 
 	demo := DemoFile{}
-	ParseDemo(os.Args[1], &demo)
+	demo.ParseDemo(os.Args[1])
 	fmt.Printf("Map: %s (%s)\n", demo.Serverdata.MapName, demo.Configstrings[33].String)
 	fmt.Printf("Frames: %d\n", len(demo.Frames))
 }
