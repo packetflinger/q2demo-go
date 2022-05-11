@@ -3,6 +3,7 @@ package main
 import (
 	//"encoding/hex"
 
+	"encoding/hex"
 	"fmt"
 	"os"
 )
@@ -28,6 +29,7 @@ type ServerFrame struct {
  * A structure to store a parsed (packed) demo file
  */
 type DemoFile struct {
+	Filename      string
 	ParsingFrames bool
 	Serverdata    ServerData
 	Configstrings [MaxConfigStrings]ConfigString
@@ -144,6 +146,7 @@ func ParseLump(lump []byte, demo *DemoFile) {
 }
 
 func (demo *DemoFile) ParseDemo(filename string) {
+	demo.Filename = filename
 	position := 0
 	demofile := OpenDemo(filename)
 
@@ -153,7 +156,6 @@ func (demo *DemoFile) ParseDemo(filename string) {
 			break
 		}
 
-		//fmt.Printf("%s\n", hex.Dump(lump))
 		position += size
 
 		ParseLump(lump, demo)
@@ -165,6 +167,19 @@ func (demo *DemoFile) ParseDemo(filename string) {
 /**
  * Build a valid .dm2 file from the demo structure
  */
-func CreateDemoFile(demo *DemoFile, filename string) {
+func (demo *DemoFile) WriteFile(filename string) {
+	// write the serverdata first
+	msg := MessageBuffer{}
+	msg.Buffer = make([]byte, 32)
 
+	WriteLong(demo.Serverdata.Protocol, &msg)
+	WriteLong(demo.Serverdata.ServerCount, &msg)
+	WriteByte(1, &msg)
+	//WriteString(demo.Serverdata.GameDir, &msg)
+	WriteString("opentdm", &msg)
+	//WriteShort(uint16(demo.Serverdata.ClientNumber), &msg)
+	WriteShort(99, &msg)
+	WriteString(demo.Serverdata.MapName, &msg)
+
+	fmt.Printf("%s\n", hex.Dump(msg.Buffer))
 }

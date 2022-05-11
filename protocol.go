@@ -93,6 +93,10 @@ const (
 	PlayerMask = (1 << PlayerBits) - 1
 )
 
+const (
+	CSMapname = 33
+)
+
 func ReadLong(msg *MessageBuffer) int32 {
 	var tmp struct {
 		Value int32
@@ -107,6 +111,14 @@ func ReadLong(msg *MessageBuffer) int32 {
 	return tmp.Value
 }
 
+func WriteLong(data int32, msg *MessageBuffer) {
+	msg.Buffer[msg.Index] = byte(data & 0xff)
+	msg.Buffer[msg.Index+1] = byte((data >> 8) & 0xff)
+	msg.Buffer[msg.Index+2] = byte((data >> 16) & 0xff)
+	msg.Buffer[msg.Index+3] = byte((data >> 24) & 0xff)
+	msg.Index += 4
+}
+
 /**
  * basically just grab a subsection of the buffer
  */
@@ -114,6 +126,11 @@ func ReadData(msg *MessageBuffer, length int) []byte {
 	start := msg.Index
 	msg.Index += length
 	return msg.Buffer[start:msg.Index]
+}
+
+func WriteData(data []byte, msg *MessageBuffer) {
+	msg.Buffer = append(msg.Buffer, data...)
+	msg.Index += len(data)
 }
 
 /**
@@ -137,6 +154,12 @@ func ReadString(msg *MessageBuffer) string {
 	return buffer.String()
 }
 
+func WriteString(s string, msg *MessageBuffer) {
+	b := []byte(s)
+	msg.Buffer = append(msg.Buffer, b...)
+	msg.Index += len(b)
+}
+
 /**
  * Read two bytes as a Short
  */
@@ -154,6 +177,12 @@ func ReadShort(msg *MessageBuffer) uint16 {
 	return tmp.Value
 }
 
+func WriteShort(s uint16, msg *MessageBuffer) {
+	msg.Buffer[msg.Index] = byte(s & 0xff)
+	msg.Buffer[msg.Index+1] = byte(s>>8) & 0xff
+	msg.Index += 2
+}
+
 // for consistency
 func ReadByte(msg *MessageBuffer) byte {
 	val := byte(msg.Buffer[msg.Index])
@@ -161,10 +190,20 @@ func ReadByte(msg *MessageBuffer) byte {
 	return val
 }
 
+func WriteByte(b byte, msg *MessageBuffer) {
+	msg.Buffer[msg.Index] = b
+	msg.Index++
+}
+
 func ReadChar(msg *MessageBuffer) int8 {
 	val := int8(msg.Buffer[msg.Index])
 	msg.Index++
 	return val
+}
+
+func WriteChar(c uint8, msg *MessageBuffer) {
+	msg.Buffer[msg.Index] = byte(c)
+	msg.Index++
 }
 
 func ReadWord(msg *MessageBuffer) int16 {
@@ -179,4 +218,10 @@ func ReadWord(msg *MessageBuffer) int16 {
 
 	msg.Index += 2
 	return tmp.Value
+}
+
+func WriteWord(w int16, msg *MessageBuffer) {
+	msg.Buffer[msg.Index] = byte(w & 0xff)
+	msg.Buffer[msg.Index+1] = byte(w >> 8)
+	msg.Index += 2
 }

@@ -13,6 +13,8 @@ func main() {
 
 	demo := DemoFile{}
 	demo.ParseDemo(os.Args[1])
-	fmt.Printf("Map: %s (%s)\n", demo.Serverdata.MapName, demo.Configstrings[33].String)
+	fmt.Printf("Map: %s (%s)\n", demo.Serverdata.MapName, demo.Configstrings[CSMapname].String)
 	fmt.Printf("Frames: %d\n", len(demo.Frames))
+
+	//demo.WriteFile(demo.Filename + ".2")
 }
