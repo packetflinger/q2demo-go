@@ -175,9 +175,9 @@ func (demo *DemoFile) WriteFile(filename string) {
 	msg.WriteLong(demo.Serverdata.Protocol)
 	msg.WriteLong(demo.Serverdata.ServerCount)
 	msg.WriteByte(1)
-	//WriteString(demo.Serverdata.GameDir, &msg)
+	msg.WriteString(demo.Serverdata.GameDir)
 	msg.WriteString("opentdm")
-	//WriteShort(uint16(dem 	o.Serverdata.ClientNumber), &msg)
+	msg.WriteShort(uint16(demo.Serverdata.ClientNumber))
 	msg.WriteShort(99)
 	msg.WriteString(demo.Serverdata.MapName)
 
