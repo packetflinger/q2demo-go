@@ -154,10 +154,16 @@ func ReadString(msg *MessageBuffer) string {
 	return buffer.String()
 }
 
+/**
+ * Write a string char by char to a messagebuffer.
+ * Strings are null terminated, so add a 0x00 at the end.
+ */
 func (msg *MessageBuffer) WriteString(s string) {
 	for _, ch := range s {
 		msg.WriteByte(byte(ch))
 	}
+
+	msg.WriteByte(0)
 }
 
 /**
