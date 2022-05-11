@@ -170,16 +170,16 @@ func (demo *DemoFile) ParseDemo(filename string) {
 func (demo *DemoFile) WriteFile(filename string) {
 	// write the serverdata first
 	msg := MessageBuffer{}
-	msg.Buffer = make([]byte, 32)
+	msg.Buffer = make([]byte, 64)
 
-	WriteLong(demo.Serverdata.Protocol, &msg)
-	WriteLong(demo.Serverdata.ServerCount, &msg)
-	WriteByte(1, &msg)
+	msg.WriteLong(demo.Serverdata.Protocol)
+	msg.WriteLong(demo.Serverdata.ServerCount)
+	msg.WriteByte(1)
 	//WriteString(demo.Serverdata.GameDir, &msg)
-	WriteString("opentdm", &msg)
-	//WriteShort(uint16(demo.Serverdata.ClientNumber), &msg)
-	WriteShort(99, &msg)
-	WriteString(demo.Serverdata.MapName, &msg)
+	msg.WriteString("opentdm")
+	//WriteShort(uint16(dem 	o.Serverdata.ClientNumber), &msg)
+	msg.WriteShort(99)
+	msg.WriteString(demo.Serverdata.MapName)
 
 	fmt.Printf("%s\n", hex.Dump(msg.Buffer))
 }

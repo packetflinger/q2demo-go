@@ -16,5 +16,5 @@ func main() {
 	fmt.Printf("Map: %s (%s)\n", demo.Serverdata.MapName, demo.Configstrings[CSMapname].String)
 	fmt.Printf("Frames: %d\n", len(demo.Frames))
 
-	//demo.WriteFile(demo.Filename + ".2")
+	demo.WriteFile(demo.Filename + ".2")
 }

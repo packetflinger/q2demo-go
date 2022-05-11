@@ -111,7 +111,7 @@ func ReadLong(msg *MessageBuffer) int32 {
 	return tmp.Value
 }
 
-func WriteLong(data int32, msg *MessageBuffer) {
+func (msg *MessageBuffer) WriteLong(data int32) {
 	msg.Buffer[msg.Index] = byte(data & 0xff)
 	msg.Buffer[msg.Index+1] = byte((data >> 8) & 0xff)
 	msg.Buffer[msg.Index+2] = byte((data >> 16) & 0xff)
@@ -128,7 +128,7 @@ func ReadData(msg *MessageBuffer, length int) []byte {
 	return msg.Buffer[start:msg.Index]
 }
 
-func WriteData(data []byte, msg *MessageBuffer) {
+func (msg *MessageBuffer) WriteData(data []byte) {
 	msg.Buffer = append(msg.Buffer, data...)
 	msg.Index += len(data)
 }
@@ -154,10 +154,10 @@ func ReadString(msg *MessageBuffer) string {
 	return buffer.String()
 }
 
-func WriteString(s string, msg *MessageBuffer) {
-	b := []byte(s)
-	msg.Buffer = append(msg.Buffer, b...)
-	msg.Index += len(b)
+func (msg *MessageBuffer) WriteString(s string) {
+	for _, ch := range s {
+		msg.WriteByte(byte(ch))
+	}
 }
 
 /**
@@ -177,7 +177,7 @@ func ReadShort(msg *MessageBuffer) uint16 {
 	return tmp.Value
 }
 
-func WriteShort(s uint16, msg *MessageBuffer) {
+func (msg *MessageBuffer) WriteShort(s uint16) {
 	msg.Buffer[msg.Index] = byte(s & 0xff)
 	msg.Buffer[msg.Index+1] = byte(s>>8) & 0xff
 	msg.Index += 2
@@ -190,7 +190,7 @@ func ReadByte(msg *MessageBuffer) byte {
 	return val
 }
 
-func WriteByte(b byte, msg *MessageBuffer) {
+func (msg *MessageBuffer) WriteByte(b byte) {
 	msg.Buffer[msg.Index] = b
 	msg.Index++
 }
@@ -201,7 +201,7 @@ func ReadChar(msg *MessageBuffer) int8 {
 	return val
 }
 
-func WriteChar(c uint8, msg *MessageBuffer) {
+func (msg *MessageBuffer) WriteChar(c uint8) {
 	msg.Buffer[msg.Index] = byte(c)
 	msg.Index++
 }
@@ -220,7 +220,7 @@ func ReadWord(msg *MessageBuffer) int16 {
 	return tmp.Value
 }
 
-func WriteWord(w int16, msg *MessageBuffer) {
+func (msg *MessageBuffer) WriteWord(w int16) {
 	msg.Buffer[msg.Index] = byte(w & 0xff)
 	msg.Buffer[msg.Index+1] = byte(w >> 8)
 	msg.Index += 2
