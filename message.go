@@ -103,14 +103,14 @@ func (m *MessageBuffer) ParseConfigString() ConfigString {
 }
 
 func (m *MessageBuffer) ParseSpawnBaseline() PackedEntity {
-	bitmask := ParseEntityBitmask(m)
+	bitmask := m.ParseEntityBitmask()
 	number := ParseEntityNumber(m, bitmask)
 	ent := ParseEntity(m, PackedEntity{}, number, bitmask)
 
 	return ent
 }
 
-func ParseEntityBitmask(m *MessageBuffer) uint32 {
+func (m *MessageBuffer) ParseEntityBitmask() uint32 {
 	bits := uint32(m.ReadByte())
 
 	if bits&EntityMoreBits1 != 0 {
@@ -362,7 +362,7 @@ func ParseDeltaPlayerstate(m *MessageBuffer) PackedPlayer {
 func ParsePacketEntities(m *MessageBuffer) []PackedEntity {
 	ents := []PackedEntity{}
 	for {
-		bits := ParseEntityBitmask(m)
+		bits := m.ParseEntityBitmask()
 		num := ParseEntityNumber(m, bits)
 
 		if num <= 0 {
