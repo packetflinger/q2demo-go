@@ -105,7 +105,7 @@ func (m *MessageBuffer) ParseConfigString() ConfigString {
 func (m *MessageBuffer) ParseSpawnBaseline() PackedEntity {
 	bitmask := m.ParseEntityBitmask()
 	number := m.ParseEntityNumber(bitmask)
-	ent := ParseEntity(m, PackedEntity{}, number, bitmask)
+	ent := m.ParseEntity(PackedEntity{}, number, bitmask)
 
 	return ent
 }
@@ -139,7 +139,7 @@ func (m *MessageBuffer) ParseEntityNumber(flags uint32) uint16 {
 	return num
 }
 
-func ParseEntity(m *MessageBuffer, from PackedEntity, num uint16, bits uint32) PackedEntity {
+func (m *MessageBuffer) ParseEntity(from PackedEntity, num uint16, bits uint32) PackedEntity {
 	to := from
 	to.Number = uint32(num)
 
@@ -369,7 +369,7 @@ func ParsePacketEntities(m *MessageBuffer) []PackedEntity {
 			break
 		}
 
-		entity := ParseEntity(m, PackedEntity{}, num, bits)
+		entity := m.ParseEntity(PackedEntity{}, num, bits)
 		ents = append(ents, entity)
 	}
 
