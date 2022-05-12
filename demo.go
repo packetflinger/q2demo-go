@@ -93,7 +93,7 @@ func ParseLump(lump []byte, demo *DemoFile) {
 
 		switch cmd {
 		case SVCServerData:
-			s := ParseServerData(&buf)
+			s := buf.ParseServerData()
 			demo.Serverdata = s
 
 		case SVCConfigString:

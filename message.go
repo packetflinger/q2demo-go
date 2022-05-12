@@ -80,7 +80,7 @@ type Print struct {
 	String string
 }
 
-func ParseServerData(m *MessageBuffer) ServerData {
+func (m *MessageBuffer) ParseServerData() ServerData {
 	sd := ServerData{}
 
 	sd.Protocol = m.ReadLong()
