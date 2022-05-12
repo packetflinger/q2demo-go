@@ -170,8 +170,8 @@ func (demo *DemoFile) ParseDemo(filename string) {
 func (demo *DemoFile) WriteFile(filename string) {
 	// write the serverdata first
 	msg := MessageBuffer{}
-	msg.Buffer = make([]byte, 64)
-
+	msg.Buffer = make([]byte, 0xffff)
+	msg.WriteByte(SVCServerData)
 	msg.WriteLong(demo.Serverdata.Protocol)
 	msg.WriteLong(demo.Serverdata.ServerCount)
 	msg.WriteByte(1) // this is a demo
@@ -179,5 +179,25 @@ func (demo *DemoFile) WriteFile(filename string) {
 	msg.WriteShort(uint16(demo.Serverdata.ClientNumber))
 	msg.WriteString(demo.Serverdata.MapName)
 
-	fmt.Printf("%s\n", hex.Dump(msg.Buffer))
+	// configstrings
+	for _, cs := range demo.Configstrings {
+		if cs.String == "" {
+			continue
+		}
+
+		msg.WriteByte(SVCConfigString)
+		msg.WriteShort(uint16(cs.Index))
+		msg.WriteString(cs.String)
+	}
+
+	// baselines
+	for _, ent := range demo.Baselines {
+		if ent.Number == 0 {
+			continue
+		}
+
+		// write delta entity here
+	}
+
+	fmt.Printf("%s\n", hex.Dump(msg.Buffer[:msg.Index]))
 }
