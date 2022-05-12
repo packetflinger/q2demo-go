@@ -263,7 +263,7 @@ func (m *MessageBuffer) ParseFrame() FrameMsg {
 	return fr
 }
 
-func ParseDeltaPlayerstate(m *MessageBuffer) PackedPlayer {
+func (m *MessageBuffer) ParseDeltaPlayerstate() PackedPlayer {
 	bits := m.ReadWord()
 	pm := PlayerMoveState{}
 	ps := PackedPlayer{}

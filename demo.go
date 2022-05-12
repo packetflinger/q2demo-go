@@ -130,7 +130,7 @@ func ParseLump(lump []byte, demo *DemoFile) {
 			}
 
 		case SVCPlayerInfo:
-			ps := ParseDeltaPlayerstate(&buf)
+			ps := buf.ParseDeltaPlayerstate()
 			currentframe.Playerstate = ps
 
 		case SVCPacketEntities:
