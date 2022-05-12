@@ -196,6 +196,7 @@ func (demo *DemoFile) WriteFile(filename string) {
 			continue
 		}
 
+		msg.WriteByte(SVCSpawnBaseline)
 		msg.WriteDeltaEntity(PackedEntity{}, ent)
 	}
 
