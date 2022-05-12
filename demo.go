@@ -134,7 +134,7 @@ func ParseLump(lump []byte, demo *DemoFile) {
 			currentframe.Playerstate = ps
 
 		case SVCPacketEntities:
-			ents := ParsePacketEntities(&buf)
+			ents := buf.ParsePacketEntities()
 			for _, e := range ents {
 				currentframe.Entities[e.Number] = e
 			}

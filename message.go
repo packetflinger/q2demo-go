@@ -359,7 +359,7 @@ func (m *MessageBuffer) ParseDeltaPlayerstate() PackedPlayer {
 	return ps
 }
 
-func ParsePacketEntities(m *MessageBuffer) []PackedEntity {
+func (m *MessageBuffer) ParsePacketEntities() []PackedEntity {
 	ents := []PackedEntity{}
 	for {
 		bits := m.ParseEntityBitmask()
