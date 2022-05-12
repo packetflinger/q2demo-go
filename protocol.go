@@ -97,6 +97,11 @@ const (
 	CSMapname = 33
 )
 
+const (
+	RFFrameLerp = 64
+	RFBeam      = 128
+)
+
 func (msg *MessageBuffer) ReadLong() int32 {
 	var tmp struct {
 		Value int32
