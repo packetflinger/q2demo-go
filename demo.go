@@ -140,7 +140,7 @@ func ParseLump(lump []byte, demo *DemoFile) {
 			}
 
 		case SVCPrint:
-			_ = ParsePrint(&buf)
+			_ = buf.ParsePrint()
 		}
 	}
 }

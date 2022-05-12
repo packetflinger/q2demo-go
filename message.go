@@ -376,7 +376,7 @@ func (m *MessageBuffer) ParsePacketEntities() []PackedEntity {
 	return ents
 }
 
-func ParsePrint(m *MessageBuffer) Print {
+func (m *MessageBuffer) ParsePrint() Print {
 	st := Print{
 		Level:  uint8(m.ReadByte()),
 		String: m.ReadString(),
