@@ -384,3 +384,11 @@ func (m *MessageBuffer) ParsePrint() Print {
 
 	return st
 }
+
+/**
+ * Compare from and to and only write what's different.
+ * This is "delta compression"
+ */
+func (m *MessageBuffer) WriteDeltaEntity(from PackedEntity, to PackedEntity) {
+
+}

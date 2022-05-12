@@ -196,7 +196,7 @@ func (demo *DemoFile) WriteFile(filename string) {
 			continue
 		}
 
-		// write delta entity here
+		msg.WriteDeltaEntity(PackedEntity{}, ent)
 	}
 
 	fmt.Printf("%s\n", hex.Dump(msg.Buffer[:msg.Index]))
