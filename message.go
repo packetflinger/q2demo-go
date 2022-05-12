@@ -245,7 +245,7 @@ func (m *MessageBuffer) ParseStuffText() StuffText {
 	return str
 }
 
-func ParseFrame(m *MessageBuffer) FrameMsg {
+func (m *MessageBuffer) ParseFrame() FrameMsg {
 	N := int32(m.ReadLong())
 	D := int32(m.ReadLong())
 	S := int8(m.ReadByte())

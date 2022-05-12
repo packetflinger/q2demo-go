@@ -117,7 +117,7 @@ func ParseLump(lump []byte, demo *DemoFile) {
 			}
 
 		case SVCFrame:
-			fr := ParseFrame(&buf)
+			fr := buf.ParseFrame()
 			demo.Frames = append(demo.Frames, ServerFrame{})
 			if currentframe != nil {
 				previousframe = currentframe
