@@ -93,7 +93,7 @@ func (m *MessageBuffer) ParseServerData() ServerData {
 	return sd
 }
 
-func ParseConfigString(m *MessageBuffer) ConfigString {
+func (m *MessageBuffer) ParseConfigString() ConfigString {
 	cs := ConfigString{
 		Index:  int16(m.ReadShort()),
 		String: m.ReadString(),

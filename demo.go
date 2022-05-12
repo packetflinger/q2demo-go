@@ -97,7 +97,7 @@ func ParseLump(lump []byte, demo *DemoFile) {
 			demo.Serverdata = s
 
 		case SVCConfigString:
-			cs := ParseConfigString(&buf)
+			cs := buf.ParseConfigString()
 			if !demo.ParsingFrames {
 				demo.Configstrings[cs.Index] = cs
 			} else {
