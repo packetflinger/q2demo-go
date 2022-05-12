@@ -102,7 +102,7 @@ func (m *MessageBuffer) ParseConfigString() ConfigString {
 	return cs
 }
 
-func ParseSpawnBaseline(m *MessageBuffer) PackedEntity {
+func (m *MessageBuffer) ParseSpawnBaseline() PackedEntity {
 	bitmask := ParseEntityBitmask(m)
 	number := ParseEntityNumber(m, bitmask)
 	ent := ParseEntity(m, PackedEntity{}, number, bitmask)

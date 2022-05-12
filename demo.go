@@ -105,7 +105,7 @@ func ParseLump(lump []byte, demo *DemoFile) {
 			}
 
 		case SVCSpawnBaseline:
-			bl := ParseSpawnBaseline(&buf)
+			bl := buf.ParseSpawnBaseline()
 			demo.Baselines[bl.Number] = bl
 
 		case SVCStuffText:
