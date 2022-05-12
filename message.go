@@ -83,20 +83,20 @@ type Print struct {
 func ParseServerData(m *MessageBuffer) ServerData {
 	sd := ServerData{}
 
-	sd.Protocol = ReadLong(m)
-	sd.ServerCount = ReadLong(m)
-	sd.Demo = int8(ReadByte(m))
-	sd.GameDir = ReadString(m)
-	sd.ClientNumber = int16(ReadShort(m))
-	sd.MapName = ReadString(m)
+	sd.Protocol = m.ReadLong()
+	sd.ServerCount = m.ReadLong()
+	sd.Demo = int8(m.ReadByte())
+	sd.GameDir = m.ReadString()
+	sd.ClientNumber = int16(m.ReadShort())
+	sd.MapName = m.ReadString()
 
 	return sd
 }
 
 func ParseConfigString(m *MessageBuffer) ConfigString {
 	cs := ConfigString{
-		Index:  int16(ReadShort(m)),
-		String: ReadString(m),
+		Index:  int16(m.ReadShort()),
+		String: m.ReadString(),
 	}
 
 	return cs
@@ -111,18 +111,18 @@ func ParseSpawnBaseline(m *MessageBuffer) PackedEntity {
 }
 
 func ParseEntityBitmask(m *MessageBuffer) uint32 {
-	bits := uint32(ReadByte(m))
+	bits := uint32(m.ReadByte())
 
 	if bits&EntityMoreBits1 != 0 {
-		bits |= (uint32(ReadByte(m)) << 8)
+		bits |= (uint32(m.ReadByte()) << 8)
 	}
 
 	if bits&EntityMoreBits2 != 0 {
-		bits |= (uint32(ReadByte(m)) << 16)
+		bits |= (uint32(m.ReadByte()) << 16)
 	}
 
 	if bits&EntityMoreBits3 != 0 {
-		bits |= (uint32(ReadByte(m)) << 24)
+		bits |= (uint32(m.ReadByte()) << 24)
 	}
 
 	return uint32(bits)
@@ -131,9 +131,9 @@ func ParseEntityBitmask(m *MessageBuffer) uint32 {
 func ParseEntityNumber(m *MessageBuffer, flags uint32) uint16 {
 	num := uint16(0)
 	if flags&EntityNumber16 != 0 {
-		num = uint16(ReadShort(m))
+		num = uint16(m.ReadShort())
 	} else {
-		num = uint16(ReadByte(m))
+		num = uint16(m.ReadByte())
 	}
 
 	return num
@@ -148,109 +148,109 @@ func ParseEntity(m *MessageBuffer, from PackedEntity, num uint16, bits uint32) P
 	}
 
 	if bits&EntityModel != 0 {
-		to.ModelIndex = uint8(ReadByte(m))
+		to.ModelIndex = uint8(m.ReadByte())
 	}
 
 	if bits&EntityModel2 != 0 {
-		to.ModelIndex2 = uint8(ReadByte(m))
+		to.ModelIndex2 = uint8(m.ReadByte())
 	}
 
 	if bits&EntityModel3 != 0 {
-		to.ModelIndex3 = uint8(ReadByte(m))
+		to.ModelIndex3 = uint8(m.ReadByte())
 	}
 
 	if bits&EntityModel4 != 0 {
-		to.ModelIndex4 = uint8(ReadByte(m))
+		to.ModelIndex4 = uint8(m.ReadByte())
 	}
 
 	if bits&EntityFrame8 != 0 {
-		to.Frame = uint16(ReadByte(m))
+		to.Frame = uint16(m.ReadByte())
 	}
 
 	if bits&EntityFrame16 != 0 {
-		to.Frame = uint16(ReadShort(m))
+		to.Frame = uint16(m.ReadShort())
 	}
 
 	if (bits & (EntitySkin8 | EntitySkin16)) == (EntitySkin8 | EntitySkin16) {
-		to.SkinNum = uint32(ReadLong(m))
+		to.SkinNum = uint32(m.ReadLong())
 	} else if bits&EntitySkin8 != 0 {
-		to.SkinNum = uint32(ReadByte(m))
+		to.SkinNum = uint32(m.ReadByte())
 	} else if bits&EntitySkin16 != 0 {
-		to.SkinNum = uint32(ReadWord(m))
+		to.SkinNum = uint32(m.ReadWord())
 	}
 
 	if (bits & (EntityEffects8 | EntityEffects16)) == (EntityEffects8 | EntityEffects16) {
-		to.Effects = uint32(ReadLong(m))
+		to.Effects = uint32(m.ReadLong())
 	} else if bits&EntityEffects8 != 0 {
-		to.Effects = uint32(ReadByte(m))
+		to.Effects = uint32(m.ReadByte())
 	} else if bits&EntityEffects16 != 0 {
-		to.Effects = uint32(ReadWord(m))
+		to.Effects = uint32(m.ReadWord())
 	}
 
 	if (bits & (EntityRenderFX8 | EntityRenderFX16)) == (EntityRenderFX8 | EntityRenderFX16) {
-		to.RenderFX = uint32(ReadLong(m))
+		to.RenderFX = uint32(m.ReadLong())
 	} else if bits&EntityRenderFX8 != 0 {
-		to.RenderFX = uint32(ReadByte(m))
+		to.RenderFX = uint32(m.ReadByte())
 	} else if bits&EntityRenderFX16 != 0 {
-		to.RenderFX = uint32(ReadWord(m))
+		to.RenderFX = uint32(m.ReadWord())
 	}
 
 	if bits&EntityOrigin1 != 0 {
-		to.Origin[0] = int16(ReadShort(m))
+		to.Origin[0] = int16(m.ReadShort())
 	}
 
 	if bits&EntityOrigin2 != 0 {
-		to.Origin[1] = int16(ReadShort(m))
+		to.Origin[1] = int16(m.ReadShort())
 	}
 
 	if bits&EntityOrigin3 != 0 {
-		to.Origin[2] = int16(ReadShort(m))
+		to.Origin[2] = int16(m.ReadShort())
 	}
 
 	if bits&EntityAngle1 != 0 {
-		to.Angles[0] = int16(ReadByte(m))
+		to.Angles[0] = int16(m.ReadByte())
 	}
 
 	if bits&EntityAngle2 != 0 {
-		to.Angles[1] = int16(ReadByte(m))
+		to.Angles[1] = int16(m.ReadByte())
 	}
 
 	if bits&EntityAngle3 != 0 {
-		to.Angles[2] = int16(ReadByte(m))
+		to.Angles[2] = int16(m.ReadByte())
 	}
 
 	if bits&EntityOldOrigin != 0 {
-		to.OldOrigin[0] = int16(ReadShort(m))
-		to.OldOrigin[1] = int16(ReadShort(m))
-		to.OldOrigin[2] = int16(ReadShort(m))
+		to.OldOrigin[0] = int16(m.ReadShort())
+		to.OldOrigin[1] = int16(m.ReadShort())
+		to.OldOrigin[2] = int16(m.ReadShort())
 	}
 
 	if bits&EntitySound != 0 {
-		to.Sound = uint8(ReadByte(m))
+		to.Sound = uint8(m.ReadByte())
 	}
 
 	if bits&EntityEvent != 0 {
-		to.Event = uint8(ReadByte(m))
+		to.Event = uint8(m.ReadByte())
 	}
 
 	if bits&EntitySolid != 0 {
-		to.Solid = uint32(ReadWord(m))
+		to.Solid = uint32(m.ReadWord())
 	}
 
 	return to
 }
 
 func ParseStuffText(m *MessageBuffer) StuffText {
-	str := StuffText{String: ReadString(m)}
+	str := StuffText{String: m.ReadString()}
 	return str
 }
 
 func ParseFrame(m *MessageBuffer) FrameMsg {
-	N := int32(ReadLong(m))
-	D := int32(ReadLong(m))
-	S := int8(ReadByte(m))
-	A := int8(ReadByte(m))
-	Ab := ReadData(m, int(A))
+	N := int32(m.ReadLong())
+	D := int32(m.ReadLong())
+	S := int8(m.ReadByte())
+	A := int8(m.ReadByte())
+	Ab := m.ReadData(int(A))
 
 	fr := FrameMsg{
 		Number:     N,
@@ -264,7 +264,7 @@ func ParseFrame(m *MessageBuffer) FrameMsg {
 }
 
 func ParseDeltaPlayerstate(m *MessageBuffer) PackedPlayer {
-	bits := ReadWord(m)
+	bits := m.ReadWord()
 	pm := PlayerMoveState{}
 	ps := PackedPlayer{}
 
@@ -273,84 +273,84 @@ func ParseDeltaPlayerstate(m *MessageBuffer) PackedPlayer {
 	}*/
 
 	if bits&PlayerType != 0 {
-		pm.Type = uint8(ReadByte(m))
+		pm.Type = uint8(m.ReadByte())
 	}
 
 	if bits&PlayerOrigin != 0 {
-		pm.Origin[0] = int16(ReadShort(m))
-		pm.Origin[1] = int16(ReadShort(m))
-		pm.Origin[2] = int16(ReadShort(m))
+		pm.Origin[0] = int16(m.ReadShort())
+		pm.Origin[1] = int16(m.ReadShort())
+		pm.Origin[2] = int16(m.ReadShort())
 	}
 
 	if bits&PlayerVelocity != 0 {
-		pm.Velocity[0] = int16(ReadShort(m))
-		pm.Velocity[1] = int16(ReadShort(m))
-		pm.Velocity[2] = int16(ReadShort(m))
+		pm.Velocity[0] = int16(m.ReadShort())
+		pm.Velocity[1] = int16(m.ReadShort())
+		pm.Velocity[2] = int16(m.ReadShort())
 	}
 
 	if bits&PlayerTime != 0 {
-		pm.Time = ReadByte(m)
+		pm.Time = m.ReadByte()
 	}
 
 	if bits&PlayerFlags != 0 {
-		pm.Flags = ReadByte(m)
+		pm.Flags = m.ReadByte()
 	}
 
 	if bits&PlayerGravity != 0 {
-		pm.Gravity = int16(ReadShort(m))
+		pm.Gravity = int16(m.ReadShort())
 	}
 
 	if bits&PlayerDeltaAngles != 0 {
-		pm.DeltaAngles[0] = int16(ReadShort(m))
-		pm.DeltaAngles[1] = int16(ReadShort(m))
-		pm.DeltaAngles[2] = int16(ReadShort(m))
+		pm.DeltaAngles[0] = int16(m.ReadShort())
+		pm.DeltaAngles[1] = int16(m.ReadShort())
+		pm.DeltaAngles[2] = int16(m.ReadShort())
 	}
 
 	if bits&PlayerViewOffset != 0 {
-		ps.ViewOffset[0] = int8(ReadChar(m))
-		ps.ViewOffset[1] = int8(ReadChar(m))
-		ps.ViewOffset[2] = int8(ReadChar(m))
+		ps.ViewOffset[0] = int8(m.ReadChar())
+		ps.ViewOffset[1] = int8(m.ReadChar())
+		ps.ViewOffset[2] = int8(m.ReadChar())
 	}
 
 	if bits&PlayerViewAngles != 0 {
-		ps.ViewAngles[0] = int16(ReadShort(m))
-		ps.ViewAngles[1] = int16(ReadShort(m))
-		ps.ViewAngles[2] = int16(ReadShort(m))
+		ps.ViewAngles[0] = int16(m.ReadShort())
+		ps.ViewAngles[1] = int16(m.ReadShort())
+		ps.ViewAngles[2] = int16(m.ReadShort())
 	}
 
 	if bits&PlayerWeaponIndex != 0 {
-		ps.GunIndex = uint8(ReadByte(m))
+		ps.GunIndex = uint8(m.ReadByte())
 	}
 
 	if bits&PlayerWeaponFrame != 0 {
-		ps.GunFrame = uint8(ReadByte(m))
-		ps.GunOffset[0] = int8(ReadChar(m))
-		ps.GunOffset[1] = int8(ReadChar(m))
-		ps.GunOffset[2] = int8(ReadChar(m))
-		ps.GunAngles[0] = int8(ReadChar(m))
-		ps.GunAngles[1] = int8(ReadChar(m))
-		ps.GunAngles[2] = int8(ReadChar(m))
+		ps.GunFrame = uint8(m.ReadByte())
+		ps.GunOffset[0] = int8(m.ReadChar())
+		ps.GunOffset[1] = int8(m.ReadChar())
+		ps.GunOffset[2] = int8(m.ReadChar())
+		ps.GunAngles[0] = int8(m.ReadChar())
+		ps.GunAngles[1] = int8(m.ReadChar())
+		ps.GunAngles[2] = int8(m.ReadChar())
 	}
 
 	if bits&PlayerBlend != 0 {
-		ps.Blend[0] = uint8(ReadChar(m))
-		ps.Blend[1] = uint8(ReadChar(m))
-		ps.Blend[2] = uint8(ReadChar(m))
-		ps.Blend[3] = uint8(ReadChar(m))
+		ps.Blend[0] = uint8(m.ReadChar())
+		ps.Blend[1] = uint8(m.ReadChar())
+		ps.Blend[2] = uint8(m.ReadChar())
+		ps.Blend[3] = uint8(m.ReadChar())
 	}
 
 	if bits&PlayerFOV != 0 {
-		ps.FOV = uint8(ReadByte(m))
+		ps.FOV = uint8(m.ReadByte())
 	}
 
 	if bits&PlayerRDFlags != 0 {
-		ps.RDFlags = uint8(ReadByte(m))
+		ps.RDFlags = uint8(m.ReadByte())
 	}
 
-	statbits := int32(ReadLong(m))
+	statbits := int32(m.ReadLong())
 	for i := 0; i < 32; i++ {
 		if statbits&(1<<i) != 0 {
-			ps.Stats[i] = int16(ReadShort(m))
+			ps.Stats[i] = int16(m.ReadShort())
 		}
 	}
 
@@ -378,8 +378,8 @@ func ParsePacketEntities(m *MessageBuffer) []PackedEntity {
 
 func ParsePrint(m *MessageBuffer) Print {
 	st := Print{
-		Level:  uint8(ReadByte(m)),
-		String: ReadString(m),
+		Level:  uint8(m.ReadByte()),
+		String: m.ReadString(),
 	}
 
 	return st

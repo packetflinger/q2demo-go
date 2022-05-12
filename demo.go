@@ -69,7 +69,7 @@ func NextLump(f *os.File, pos int64) ([]byte, int) {
 	//fmt.Printf("%s\n", hex.Dump(len))
 
 	lenbuf := MessageBuffer{Buffer: len, Index: 0}
-	length := ReadLong(&lenbuf)
+	length := lenbuf.ReadLong()
 	if length == -1 {
 		return []byte{}, 0
 	}
@@ -89,7 +89,7 @@ func ParseLump(lump []byte, demo *DemoFile) {
 	buf := MessageBuffer{Buffer: lump}
 
 	for buf.Index < len(buf.Buffer) {
-		cmd := ReadByte(&buf)
+		cmd := buf.ReadByte()
 
 		switch cmd {
 		case SVCServerData:
@@ -174,11 +174,10 @@ func (demo *DemoFile) WriteFile(filename string) {
 
 	msg.WriteLong(demo.Serverdata.Protocol)
 	msg.WriteLong(demo.Serverdata.ServerCount)
-	msg.WriteByte(1)
+	msg.WriteByte(1) // this is a demo
 	msg.WriteString(demo.Serverdata.GameDir)
 	msg.WriteString("opentdm")
 	msg.WriteShort(uint16(demo.Serverdata.ClientNumber))
-	msg.WriteShort(99)
 	msg.WriteString(demo.Serverdata.MapName)
 
 	fmt.Printf("%s\n", hex.Dump(msg.Buffer))

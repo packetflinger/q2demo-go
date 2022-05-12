@@ -97,7 +97,7 @@ const (
 	CSMapname = 33
 )
 
-func ReadLong(msg *MessageBuffer) int32 {
+func (msg *MessageBuffer) ReadLong() int32 {
 	var tmp struct {
 		Value int32
 	}
@@ -122,7 +122,7 @@ func (msg *MessageBuffer) WriteLong(data int32) {
 /**
  * basically just grab a subsection of the buffer
  */
-func ReadData(msg *MessageBuffer, length int) []byte {
+func (msg *MessageBuffer) ReadData(length int) []byte {
 	start := msg.Index
 	msg.Index += length
 	return msg.Buffer[start:msg.Index]
@@ -136,7 +136,7 @@ func (msg *MessageBuffer) WriteData(data []byte) {
 /**
  * Keep building a string until we hit a null
  */
-func ReadString(msg *MessageBuffer) string {
+func (msg *MessageBuffer) ReadString() string {
 	var buffer bytes.Buffer
 
 	// find the next null (terminates the string)
@@ -169,7 +169,7 @@ func (msg *MessageBuffer) WriteString(s string) {
 /**
  * Read two bytes as a Short
  */
-func ReadShort(msg *MessageBuffer) uint16 {
+func (msg *MessageBuffer) ReadShort() uint16 {
 	var tmp struct {
 		Value uint16
 	}
@@ -190,7 +190,7 @@ func (msg *MessageBuffer) WriteShort(s uint16) {
 }
 
 // for consistency
-func ReadByte(msg *MessageBuffer) byte {
+func (msg *MessageBuffer) ReadByte() byte {
 	val := byte(msg.Buffer[msg.Index])
 	msg.Index++
 	return val
@@ -201,7 +201,7 @@ func (msg *MessageBuffer) WriteByte(b byte) {
 	msg.Index++
 }
 
-func ReadChar(msg *MessageBuffer) int8 {
+func (msg *MessageBuffer) ReadChar() int8 {
 	val := int8(msg.Buffer[msg.Index])
 	msg.Index++
 	return val
@@ -212,7 +212,7 @@ func (msg *MessageBuffer) WriteChar(c uint8) {
 	msg.Index++
 }
 
-func ReadWord(msg *MessageBuffer) int16 {
+func (msg *MessageBuffer) ReadWord() int16 {
 	var tmp struct {
 		Value int16
 	}
