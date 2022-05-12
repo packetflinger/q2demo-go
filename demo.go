@@ -109,7 +109,7 @@ func ParseLump(lump []byte, demo *DemoFile) {
 			demo.Baselines[bl.Number] = bl
 
 		case SVCStuffText:
-			st := ParseStuffText(&buf)
+			st := buf.ParseStuffText()
 			// a "precache" stuff is the delimiter between header data
 			// and frames
 			if st.String == "precache\n" {

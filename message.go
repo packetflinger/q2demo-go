@@ -240,7 +240,7 @@ func (m *MessageBuffer) ParseEntity(from PackedEntity, num uint16, bits uint32) 
 	return to
 }
 
-func ParseStuffText(m *MessageBuffer) StuffText {
+func (m *MessageBuffer) ParseStuffText() StuffText {
 	str := StuffText{String: m.ReadString()}
 	return str
 }
