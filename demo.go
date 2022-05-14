@@ -203,5 +203,14 @@ func (demo *DemoFile) WriteFile(filename string) {
 	msg.WriteByte(SVCStuffText)
 	msg.WriteString("precache\n")
 
+	for _, fr := range demo.Frames {
+		msg.WriteByte(SVCFrame)
+		msg.WriteLong(fr.Frame.Number)
+		msg.WriteLong(fr.Frame.Delta)
+		msg.WriteByte(byte(fr.Frame.Suppressed))
+		msg.WriteByte(byte(fr.Frame.AreaBytes))
+		msg.WriteData(fr.Frame.AreaBits)
+	}
+
 	fmt.Printf("%s\n", hex.Dump(msg.Buffer[:msg.Index]))
 }
