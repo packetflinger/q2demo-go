@@ -200,5 +200,8 @@ func (demo *DemoFile) WriteFile(filename string) {
 		msg.WriteDeltaEntity(PackedEntity{}, ent)
 	}
 
+	msg.WriteByte(SVCStuffText)
+	msg.WriteString("precache\n")
+
 	fmt.Printf("%s\n", hex.Dump(msg.Buffer[:msg.Index]))
 }
