@@ -392,11 +392,6 @@ func (to *PackedEntity) DeltaEntityBitmask(from *PackedEntity) int {
 	bits := 0
 	mask := uint32(0xffff8000)
 
-	// no destination entity, this means remove the old one
-	if from.Number == 0 {
-		return bits
-	}
-
 	if to.Origin[0] != from.Origin[0] {
 		bits |= EntityOrigin1
 	}
