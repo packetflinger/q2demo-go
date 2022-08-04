@@ -25,6 +25,9 @@ func main() {
 	fmt.Printf("Frames: %d\n", len(demo.Frames))
 
 	//demo.WriteFile(demo.Filename + ".2")
+	if *cli_args.SVG {
+		demo.WriteIntermissionSVG()
+	}
 }
 
 func init() {

@@ -213,3 +213,8 @@ func (demo *DemoFile) WriteFile(filename string) {
 
 	fmt.Printf("%s\n", hex.Dump(msg.Buffer[:msg.Index]))
 }
+
+// Parse the layout of the intermission screen and recreate it as an SVG
+func (demo *DemoFile) WriteIntermissionSVG() {
+	fmt.Println("Writing SVG!")
+}
