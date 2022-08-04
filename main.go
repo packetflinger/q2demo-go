@@ -7,6 +7,7 @@ import (
 
 type Flags struct {
 	InputFile *string
+	Verbose   *bool
 	SVG       *bool
 }
 
@@ -29,5 +30,6 @@ func main() {
 func init() {
 	cli_args.InputFile = flag.String("i", "", "The input .dm2 file to work with")
 	cli_args.SVG = flag.Bool("s", false, "Generate an SVG 'screenshot' of the intermission scoreboard")
+	cli_args.Verbose = flag.Bool("v", false, "Show verbose output")
 	flag.Parse()
 }
