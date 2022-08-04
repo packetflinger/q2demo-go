@@ -1,20 +1,33 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"os"
 )
 
+type Flags struct {
+	InputFile *string
+	SVG       *bool
+}
+
+var cli_args Flags
+
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Printf("Usage: %s <demofile.dm2>\n", os.Args[0])
+	if *cli_args.InputFile == "" {
+		flag.Usage()
 		return
 	}
 
 	demo := DemoFile{}
-	demo.ParseDemo(os.Args[1])
+	demo.ParseDemo(*cli_args.InputFile)
 	fmt.Printf("Map: %s (%s)\n", demo.Serverdata.MapName, demo.Configstrings[CSMapname].String)
 	fmt.Printf("Frames: %d\n", len(demo.Frames))
 
-	demo.WriteFile(demo.Filename + ".2")
+	//demo.WriteFile(demo.Filename + ".2")
+}
+
+func init() {
+	cli_args.InputFile = flag.String("i", "", "The input .dm2 file to work with")
+	cli_args.SVG = flag.Bool("s", false, "Generate an SVG 'screenshot' of the intermission scoreboard")
+	flag.Parse()
 }
