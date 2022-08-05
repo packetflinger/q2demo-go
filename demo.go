@@ -88,14 +88,8 @@ func NextLump(f *os.File, pos int64) ([]byte, int) {
 func ParseLump(lump []byte, demo *DemoFile) {
 	buf := MessageBuffer{Buffer: lump}
 
-	fmt.Printf("%s\n\n", hex.Dump(buf.Buffer))
-
 	for buf.Index < len(buf.Buffer) {
 		cmd := buf.ReadByte()
-
-		if *cli_args.Verbose {
-			fmt.Printf("Msg cmd: %v\n", cmd)
-		}
 
 		switch cmd {
 		case SVCServerData:
@@ -150,6 +144,10 @@ func ParseLump(lump []byte, demo *DemoFile) {
 
 		case SVCSound:
 			_ = buf.ParseSound()
+
+		default:
+			fmt.Printf("Unknown CMD: %d\n%s\n", cmd, hex.Dump(buf.Buffer[buf.Index-1:]))
+			panic("")
 		}
 	}
 }
