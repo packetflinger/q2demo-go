@@ -2,8 +2,6 @@ package main
 
 import (
 	"bytes"
-	"encoding/binary"
-	"fmt"
 )
 
 const (
@@ -110,18 +108,14 @@ const (
 	RFBeam      = 128
 )
 
+// 4 bytes signed
 func (msg *MessageBuffer) ReadLong() int32 {
-	var tmp struct {
-		Value int32
-	}
-
-	r := bytes.NewReader(msg.Buffer[msg.Index:])
-	if err := binary.Read(r, binary.LittleEndian, &tmp); err != nil {
-		fmt.Println("binary.Read failed:", err)
-	}
-
+	l := int32(msg.Buffer[msg.Index])
+	l += int32(msg.Buffer[msg.Index+1]) << 8
+	l += int32(msg.Buffer[msg.Index+2]) << 16
+	l += int32(msg.Buffer[msg.Index+3]) << 24
 	msg.Index += 4
-	return tmp.Value
+	return l
 }
 
 func (msg *MessageBuffer) WriteLong(data int32) {
@@ -179,21 +173,13 @@ func (msg *MessageBuffer) WriteString(s string) {
 	msg.WriteByte(0)
 }
 
-/**
- * Read two bytes as a Short
- */
+// 2 bytes unsigned
 func (msg *MessageBuffer) ReadShort() uint16 {
-	var tmp struct {
-		Value uint16
-	}
-
-	r := bytes.NewReader(msg.Buffer[msg.Index:])
-	if err := binary.Read(r, binary.LittleEndian, &tmp); err != nil {
-		fmt.Println("binary.Read failed:", err)
-	}
-
+	s := uint16(msg.Buffer[msg.Index] & 0xff)
+	s += uint16(msg.Buffer[msg.Index+1]) << 8
 	msg.Index += 2
-	return tmp.Value
+
+	return s
 }
 
 func (msg *MessageBuffer) WriteShort(s uint16) {
@@ -214,6 +200,7 @@ func (msg *MessageBuffer) WriteByte(b byte) {
 	msg.Index++
 }
 
+// 1 byte signed
 func (msg *MessageBuffer) ReadChar() int8 {
 	val := int8(msg.Buffer[msg.Index])
 	msg.Index++
@@ -225,18 +212,13 @@ func (msg *MessageBuffer) WriteChar(c uint8) {
 	msg.Index++
 }
 
+// 2 bytes signed
 func (msg *MessageBuffer) ReadWord() int16 {
-	var tmp struct {
-		Value int16
-	}
-
-	r := bytes.NewReader(msg.Buffer[msg.Index:])
-	if err := binary.Read(r, binary.LittleEndian, &tmp); err != nil {
-		fmt.Println("binary.Read failed:", err)
-	}
-
+	s := int16(msg.Buffer[msg.Index] & 0xff)
+	s += int16(msg.Buffer[msg.Index+1]) << 8
 	msg.Index += 2
-	return tmp.Value
+
+	return s
 }
 
 func (msg *MessageBuffer) WriteWord(w int16) {
