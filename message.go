@@ -1,5 +1,9 @@
 package main
 
+import (
+	"fmt"
+)
+
 type MessageBuffer struct {
 	Buffer []byte
 	Index  int
@@ -101,6 +105,10 @@ func (m *MessageBuffer) ParseServerData() ServerData {
 	sd.ClientNumber = int16(m.ReadShort())
 	sd.MapName = m.ReadString()
 
+	if *cli_args.Verbose {
+		fmt.Printf(" * ServerData [%d] %s\n", sd.ClientNumber, sd.MapName)
+	}
+
 	return sd
 }
 
@@ -108,6 +116,10 @@ func (m *MessageBuffer) ParseConfigString() ConfigString {
 	cs := ConfigString{
 		Index:  int16(m.ReadShort()),
 		String: m.ReadString(),
+	}
+
+	if *cli_args.Verbose {
+		fmt.Printf(" * ConfigString [%d] %s\n", cs.Index, cs.String)
 	}
 
 	return cs
@@ -118,6 +130,9 @@ func (m *MessageBuffer) ParseSpawnBaseline() PackedEntity {
 	number := m.ParseEntityNumber(bitmask)
 	ent := m.ParseEntity(PackedEntity{}, number, bitmask)
 
+	if *cli_args.Verbose {
+		fmt.Printf(" * Baseline [%d]\n", number)
+	}
 	return ent
 }
 
@@ -253,6 +268,9 @@ func (m *MessageBuffer) ParseEntity(from PackedEntity, num uint16, bits uint32) 
 
 func (m *MessageBuffer) ParseStuffText() StuffText {
 	str := StuffText{String: m.ReadString()}
+	if *cli_args.Verbose {
+		fmt.Printf(" * Stuff \"%s\"\n", str)
+	}
 	return str
 }
 
@@ -271,6 +289,9 @@ func (m *MessageBuffer) ParseFrame() FrameMsg {
 		AreaBits:   Ab,
 	}
 
+	if *cli_args.Verbose {
+		fmt.Printf(" * Frame [%d,%d]\n", N, D)
+	}
 	return fr
 }
 
@@ -367,11 +388,19 @@ func (m *MessageBuffer) ParseDeltaPlayerstate() PackedPlayer {
 
 	ps.PlayerMove = pm
 
+	if *cli_args.Verbose {
+		fmt.Printf(" * PlayerState [%d]\n", bits)
+	}
+
 	return ps
 }
 
 func (m *MessageBuffer) ParsePacketEntities() []PackedEntity {
 	ents := []PackedEntity{}
+	if *cli_args.Verbose {
+		fmt.Printf(" * Entities\n")
+	}
+
 	for {
 		bits := m.ParseEntityBitmask()
 		num := m.ParseEntityNumber(bits)
@@ -382,6 +411,10 @@ func (m *MessageBuffer) ParsePacketEntities() []PackedEntity {
 
 		entity := m.ParseEntity(PackedEntity{}, num, bits)
 		ents = append(ents, entity)
+
+		if *cli_args.Verbose {
+			fmt.Printf("   - Ent [%d]\n", entity.Number)
+		}
 	}
 
 	return ents
@@ -393,6 +426,9 @@ func (m *MessageBuffer) ParsePrint() Print {
 		String: m.ReadString(),
 	}
 
+	if *cli_args.Verbose {
+		fmt.Printf(" * Print \"%s\"\n", st.String[:len(st.String)-2])
+	}
 	return st
 }
 
@@ -429,6 +465,10 @@ func (m *MessageBuffer) ParseSound() PackedSound {
 
 	if (s.Flags & SoundPosition) > 0 {
 		s.Position = m.ReadPosition()
+	}
+
+	if *cli_args.Verbose {
+		fmt.Printf(" * Sound [%d/%d]\n", s.Entity, s.Volume)
 	}
 
 	return s
