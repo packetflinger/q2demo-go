@@ -94,6 +94,14 @@ const (
 )
 
 const (
+	SoundVolume      = 1 << 0 // 1 byte
+	SoundAttenuation = 1 << 1 // 1 byte
+	SoundPosition    = 1 << 2 // 3 coordinates
+	SoundEntity      = 1 << 3 // short 0-2: channel, 3-12: entity
+	SoundOffset      = 1 << 4 // 1 byte, msec offset from frame start
+)
+
+const (
 	CSMapname = 33
 )
 
@@ -235,4 +243,19 @@ func (msg *MessageBuffer) WriteWord(w int16) {
 	msg.Buffer[msg.Index] = byte(w & 0xff)
 	msg.Buffer[msg.Index+1] = byte(w >> 8)
 	msg.Index += 2
+}
+
+func (msg *MessageBuffer) ReadCoord() uint16 {
+	return msg.ReadShort()
+}
+
+func (msg *MessageBuffer) WriteCoord(c uint16) {
+	msg.WriteShort(c)
+}
+
+func (msg *MessageBuffer) ReadPosition() [3]uint16 {
+	x := msg.ReadCoord()
+	y := msg.ReadCoord()
+	z := msg.ReadCoord()
+	return [3]uint16{x, y, z}
 }

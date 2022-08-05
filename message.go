@@ -80,6 +80,17 @@ type Print struct {
 	String string
 }
 
+type PackedSound struct {
+	Flags       uint8
+	Index       uint8
+	Volume      uint8
+	Attenuation uint8
+	TimeOffset  uint8
+	Channel     uint16
+	Entity      uint16
+	Position    [3]uint16
+}
+
 func (m *MessageBuffer) ParseServerData() ServerData {
 	sd := ServerData{}
 
@@ -383,6 +394,44 @@ func (m *MessageBuffer) ParsePrint() Print {
 	}
 
 	return st
+}
+
+func (m *MessageBuffer) ParseSound() PackedSound {
+	s := PackedSound{}
+	s.Flags = m.ReadByte()
+	s.Index = m.ReadByte()
+
+	if (s.Flags & SoundVolume) > 0 {
+		s.Volume = m.ReadByte()
+	} else {
+		s.Volume = 1
+	}
+
+	if (s.Flags & SoundAttenuation) > 0 {
+		s.Attenuation = m.ReadByte()
+	} else {
+		s.Attenuation = 1
+	}
+
+	if (s.Flags & SoundOffset) > 0 {
+		s.TimeOffset = m.ReadByte()
+	} else {
+		s.TimeOffset = 0
+	}
+
+	if (s.Flags & SoundEntity) > 0 {
+		s.Channel = m.ReadShort() & 7
+		s.Entity = s.Channel >> 3
+	} else {
+		s.Channel = 0
+		s.Entity = 0
+	}
+
+	if (s.Flags & SoundPosition) > 0 {
+		s.Position = m.ReadPosition()
+	}
+
+	return s
 }
 
 /**
