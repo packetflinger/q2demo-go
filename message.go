@@ -350,6 +350,12 @@ func (m *MessageBuffer) ParseDeltaPlayerstate() PackedPlayer {
 		ps.ViewAngles[2] = int16(m.ReadShort())
 	}
 
+	if bits&PlayerKickAngles != 0 {
+		ps.KickAngles[0] = int8(m.ReadChar())
+		ps.KickAngles[1] = int8(m.ReadChar())
+		ps.KickAngles[2] = int8(m.ReadChar())
+	}
+
 	if bits&PlayerWeaponIndex != 0 {
 		ps.GunIndex = uint8(m.ReadByte())
 	}
