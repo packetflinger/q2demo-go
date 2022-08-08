@@ -2,13 +2,13 @@ package main
 
 import (
 	"flag"
-	"fmt"
 )
 
 type Flags struct {
 	InputFile *string
 	Verbose   *bool
 	SVG       *bool
+	Prints    *bool
 }
 
 var cli_args Flags
@@ -21,8 +21,8 @@ func main() {
 
 	demo := DemoFile{}
 	demo.ParseDemo(*cli_args.InputFile)
-	fmt.Printf("Map: %s (%s)\n", demo.Serverdata.MapName, demo.Configstrings[CSMapname].String)
-	fmt.Printf("Frames: %d\n", len(demo.Frames))
+	//fmt.Printf("Map: %s (%s)\n", demo.Serverdata.MapName, demo.Configstrings[CSMapname].String)
+	//fmt.Printf("Frames: %d\n", len(demo.Frames))
 
 	//demo.WriteFile(demo.Filename + ".2")
 	if *cli_args.SVG {
@@ -34,5 +34,11 @@ func init() {
 	cli_args.InputFile = flag.String("i", "", "The input .dm2 file to work with")
 	cli_args.SVG = flag.Bool("s", false, "Generate an SVG 'screenshot' of the intermission scoreboard")
 	cli_args.Verbose = flag.Bool("v", false, "Show verbose output")
+	cli_args.Prints = flag.Bool("p", false, "Output prints (console log)")
 	flag.Parse()
+
+	// don't double output prints
+	if *cli_args.Verbose && *cli_args.Prints {
+		*cli_args.Prints = false
+	}
 }

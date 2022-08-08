@@ -459,7 +459,11 @@ func (m *MessageBuffer) ParsePrint() Print {
 	}
 
 	if *cli_args.Verbose {
-		fmt.Printf(" * Print \"%s\"\n", st.String[:len(st.String)-2])
+		fmt.Printf(" * Print \"%s\"\n", st.String[:len(st.String)-1])
+	}
+
+	if *cli_args.Prints {
+		fmt.Printf("%s\n", StripConsoleChars(st.String[:len(st.String)-1]))
 	}
 	return st
 }

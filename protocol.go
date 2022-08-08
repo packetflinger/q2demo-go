@@ -305,3 +305,15 @@ func (msg *MessageBuffer) ReadPosition() [3]uint16 {
 func (msg *MessageBuffer) ReadDirection() uint8 {
 	return msg.ReadByte()
 }
+
+// convert "hichars" or console chars to normal text
+func StripConsoleChars(input string) string {
+	in := []rune(input)
+	for i, _ := range in {
+		// this makes me ill
+		if in[i] > 128 {
+			in[i] = in[i] - 128
+		}
+	}
+	return string(in)
+}
