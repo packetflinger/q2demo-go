@@ -95,6 +95,32 @@ type PackedSound struct {
 	Position    [3]uint16
 }
 
+type TemporaryEntity struct {
+	Type      uint8
+	Position1 [3]uint16
+	Position2 [3]uint16
+	Offset    [3]uint16
+	Direction uint8
+	Count     uint8
+	Color     uint8
+	Entity1   int16
+	Entity2   int16
+	Time      int32
+}
+
+type MuzzleFlash struct {
+	Entity uint16
+	Weapon uint8
+}
+
+type Layout struct {
+	Data string
+}
+
+type CenterPrint struct {
+	Data string
+}
+
 func (m *MessageBuffer) ParseServerData() ServerData {
 	sd := ServerData{}
 
@@ -725,4 +751,200 @@ func (m *MessageBuffer) WriteDeltaFrame(from *ServerFrame, to *ServerFrame) {
 	m.WriteByte(byte(to.Frame.AreaBytes))
 	m.WriteData(to.Frame.AreaBits)
 
+}
+
+func (m *MessageBuffer) ParseTempEntity() TemporaryEntity {
+	te := TemporaryEntity{}
+
+	te.Type = m.ReadByte()
+	switch te.Type {
+	case TentBlood:
+		fallthrough
+	case TentGunshot:
+		fallthrough
+	case TentSparks:
+		fallthrough
+	case TentBulletSparks:
+		fallthrough
+	case TentScreenSparks:
+		fallthrough
+	case TentShieldSparks:
+		fallthrough
+	case TentShotgun:
+		fallthrough
+	case TentBlaster:
+		fallthrough
+	case TentGreenBlood:
+		fallthrough
+	case TentBlaster2:
+		fallthrough
+	case TentFlechette:
+		fallthrough
+	case TentHeatBeamSparks:
+		fallthrough
+	case TentHeatBeamSteam:
+		fallthrough
+	case TentMoreBlood:
+		fallthrough
+	case TentElectricSparks:
+		te.Position1 = m.ReadPosition()
+		te.Direction = m.ReadDirection()
+	case TentSplash:
+		fallthrough
+	case TentLaserSparks:
+		fallthrough
+	case TentWeldingSparks:
+		fallthrough
+	case TentTunnelSparks:
+		te.Count = m.ReadByte()
+		te.Position1 = m.ReadPosition()
+		te.Direction = m.ReadDirection()
+		te.Color = m.ReadByte()
+	case TentBlueHyperBlaster:
+		fallthrough
+	case TentRailTrail:
+		fallthrough
+	case TentBubbleTrail:
+		fallthrough
+	case TentDebugTrail:
+		fallthrough
+	case TentBubbleTrail2:
+		fallthrough
+	case TentBFGLaser:
+		te.Position1 = m.ReadPosition()
+		te.Position2 = m.ReadPosition()
+	case TentGrenadeExplosion:
+		fallthrough
+	case TentGrenadeExplosionWater:
+		fallthrough
+	case TentExplosion2:
+		fallthrough
+	case TentPlasmaExplosion:
+		fallthrough
+	case TentRocketExplosion:
+		fallthrough
+	case TentRocketExplosionWater:
+		fallthrough
+	case TentExplosion1:
+		fallthrough
+	case TentExplosion1NP:
+		fallthrough
+	case TentExplosion1Big:
+		fallthrough
+	case TentBFGExplosion:
+		fallthrough
+	case TentBFGBigExplosion:
+		fallthrough
+	case TentBossTeleport:
+		fallthrough
+	case TentPlainExplosion:
+		fallthrough
+	case TentChainFistSmoke:
+		fallthrough
+	case TentTrackerExplosion:
+		fallthrough
+	case TentTeleportEffect:
+		fallthrough
+	case TentDBallGoal:
+		fallthrough
+	case TentWidowSplash:
+		fallthrough
+	case TentNukeBlast:
+		te.Position1 = m.ReadPosition()
+	case TentParasiteAttack:
+		fallthrough
+	case TentMedicCableAttack:
+		fallthrough
+	case TentHeatBeam:
+		fallthrough
+	case TentMonsterHeatBeam:
+		te.Entity1 = int16(m.ReadShort())
+		te.Position1 = m.ReadPosition()
+		te.Position2 = m.ReadPosition()
+		te.Offset = m.ReadPosition()
+	case TentGrappleCable:
+		te.Entity1 = int16(m.ReadShort())
+		te.Position1 = m.ReadPosition()
+		te.Position2 = m.ReadPosition()
+		te.Offset = m.ReadPosition()
+	case TentLightning:
+		te.Entity1 = int16(m.ReadShort())
+		te.Entity2 = int16(m.ReadShort())
+		te.Position1 = m.ReadPosition()
+		te.Position2 = m.ReadPosition()
+	case TentFlashlight:
+		te.Position1 = m.ReadPosition()
+		te.Entity1 = int16(m.ReadShort())
+	case TentForceWall:
+		te.Position1 = m.ReadPosition()
+		te.Position2 = m.ReadPosition()
+		te.Color = m.ReadByte()
+	case TentSteam:
+		te.Entity1 = int16(m.ReadShort())
+		te.Count = m.ReadByte()
+		te.Position1 = m.ReadPosition()
+		te.Direction = m.ReadDirection()
+		te.Color = m.ReadByte()
+		te.Entity2 = int16(m.ReadShort())
+		if te.Entity1 != -1 {
+			te.Time = m.ReadLong()
+		}
+	case TentWidowBeamOut:
+		te.Entity1 = int16(m.ReadShort())
+		te.Position1 = m.ReadPosition()
+	default:
+		fmt.Printf("bad temp entity: %d\n", te.Type)
+	}
+
+	if *cli_args.Verbose {
+		fmt.Printf(" * Temporary Entity [%d]\n", te.Type)
+	}
+
+	return te
+}
+
+func (m *MessageBuffer) ParseMuzzleFlash() MuzzleFlash {
+	mf := MuzzleFlash{}
+	mf.Entity = m.ReadShort()
+	mf.Weapon = m.ReadByte()
+
+	if *cli_args.Verbose {
+		fmt.Printf(" * Muzzle Flash [%d]\n", mf.Weapon)
+	}
+	return mf
+}
+
+func (m *MessageBuffer) ParseLayout() Layout {
+	layout := Layout{}
+	layout.Data = m.ReadString()
+
+	if *cli_args.Verbose {
+		fmt.Printf(" * Layout\n")
+	}
+
+	return layout
+}
+
+// 2 bytes for every item
+func (m *MessageBuffer) ParseInventory() {
+	// we don't actually care about this, just parsing it
+	inv := [MaxItems]uint16{}
+	for i := 0; i < MaxItems; i++ {
+		inv[i] = m.ReadShort()
+	}
+
+	if *cli_args.Verbose {
+		fmt.Printf(" * Inventory\n")
+	}
+}
+
+func (m *MessageBuffer) ParseCenterPrint() CenterPrint {
+	c := CenterPrint{}
+	c.Data = m.ReadString()
+
+	if *cli_args.Verbose {
+		fmt.Printf(" * CenterPrint\n")
+	}
+
+	return c
 }

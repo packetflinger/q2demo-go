@@ -14,6 +14,7 @@ var previousframe *ServerFrame
 const (
 	MaxConfigStrings = 2080
 	MaxEntities      = 1024
+	MaxItems         = 256
 )
 
 type ServerFrame struct {
@@ -144,6 +145,24 @@ func ParseLump(lump []byte, demo *DemoFile) {
 
 		case SVCSound:
 			_ = buf.ParseSound()
+
+		case SVCTempEntity:
+			_ = buf.ParseTempEntity()
+
+		case SVCMuzzleFlash:
+			_ = buf.ParseMuzzleFlash()
+
+		case SVCMuzzleFlash2:
+			_ = buf.ParseMuzzleFlash()
+
+		case SVCLayout:
+			_ = buf.ParseLayout()
+
+		case SVCInventory:
+			buf.ParseInventory()
+
+		case SVCCenterPrint:
+			_ = buf.ParseCenterPrint()
 
 		default:
 			fmt.Printf("Unknown CMD: %d\n%s\n", cmd, hex.Dump(buf.Buffer[buf.Index-1:]))

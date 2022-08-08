@@ -100,6 +100,66 @@ const (
 )
 
 const (
+	TentGunshot = iota
+	TentBlood
+	TentBlaster
+	TentRailTrail
+	TentShotgun
+	TentExplosion1
+	TentExplosion2
+	TentRocketExplosion
+	TentGrenadeExplosion
+	TentSparks
+	TentSplash
+	TentBubbleTrail
+	TentScreenSparks
+	TentShieldSparks
+	TentBulletSparks
+	TentLaserSparks
+	TentParasiteAttack
+	TentRocketExplosionWater
+	TentGrenadeExplosionWater
+	TentMedicCableAttack
+	TentBFGExplosion
+	TentBFGBigExplosion
+	TentBossTeleport
+	TentBFGLaser
+	TentGrappleCable
+	TentWeldingSparks
+	TentGreenBlood
+	TentBlueHyperBlaster
+	TentPlasmaExplosion
+	TentTunnelSparks
+	TentBlaster2
+	TentRailTrail2
+	TentFlame
+	TentLightning
+	TentDebugTrail
+	TentPlainExplosion
+	TentFlashlight
+	TentForceWall
+	TentHeatBeam
+	TentMonsterHeatBeam
+	TentSteam
+	TentBubbleTrail2
+	TentMoreBlood
+	TentHeatBeamSparks
+	TentHeatBeamSteam
+	TentChainFistSmoke
+	TentElectricSparks
+	TentTrackerExplosion
+	TentTeleportEffect
+	TentDBallGoal
+	TentWidowBeamOut
+	TentNukeBlast
+	TentWidowSplash
+	TentExplosion1Big
+	TentExplosion1NP
+	TentFlechette
+	TentNumEntities
+)
+
+const (
 	CSMapname = 33
 )
 
@@ -240,4 +300,8 @@ func (msg *MessageBuffer) ReadPosition() [3]uint16 {
 	y := msg.ReadCoord()
 	z := msg.ReadCoord()
 	return [3]uint16{x, y, z}
+}
+
+func (msg *MessageBuffer) ReadDirection() uint8 {
+	return msg.ReadByte()
 }
