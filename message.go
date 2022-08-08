@@ -926,6 +926,10 @@ func (m *MessageBuffer) ParseLayout() Layout {
 		fmt.Printf(" * Layout\n")
 	}
 
+	if *cli_args.Layouts {
+		fmt.Println(layout.Data)
+	}
+
 	return layout
 }
 

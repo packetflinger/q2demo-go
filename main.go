@@ -9,6 +9,7 @@ type Flags struct {
 	Verbose   *bool
 	SVG       *bool
 	Prints    *bool
+	Layouts   *bool
 }
 
 var cli_args Flags
@@ -35,6 +36,7 @@ func init() {
 	cli_args.SVG = flag.Bool("s", false, "Generate an SVG 'screenshot' of the intermission scoreboard")
 	cli_args.Verbose = flag.Bool("v", false, "Show verbose output")
 	cli_args.Prints = flag.Bool("p", false, "Output prints (console log)")
+	cli_args.Layouts = flag.Bool("l", false, "Output layouts")
 	flag.Parse()
 
 	// don't double output prints
