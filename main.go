@@ -10,6 +10,7 @@ type Flags struct {
 	SVG       *bool
 	Prints    *bool
 	Layouts   *bool
+	CStrings  *bool
 }
 
 var cli_args Flags
@@ -37,10 +38,12 @@ func init() {
 	cli_args.Verbose = flag.Bool("v", false, "Show verbose output")
 	cli_args.Prints = flag.Bool("p", false, "Output prints (console log)")
 	cli_args.Layouts = flag.Bool("l", false, "Output layouts")
+	cli_args.CStrings = flag.Bool("c", false, "Output Configstrings")
 	flag.Parse()
 
 	// don't double output prints
-	if *cli_args.Verbose && *cli_args.Prints {
+	if *cli_args.Verbose {
 		*cli_args.Prints = false
+		*cli_args.CStrings = false
 	}
 }

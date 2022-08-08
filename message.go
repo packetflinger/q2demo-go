@@ -148,6 +148,10 @@ func (m *MessageBuffer) ParseConfigString() ConfigString {
 		fmt.Printf(" * ConfigString [%d] %s\n", cs.Index, cs.String)
 	}
 
+	if *cli_args.CStrings {
+		fmt.Printf("[%d] %s\n", cs.Index, cs.String)
+	}
+
 	return cs
 }
 
