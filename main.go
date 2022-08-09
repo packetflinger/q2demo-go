@@ -6,13 +6,14 @@ import (
 )
 
 type Flags struct {
-	InputFile *string
-	Verbose   *bool
-	SVG       *bool
-	Prints    *bool
-	Layouts   *bool
-	CStrings  *bool
-	Details   *bool
+	InputFile  *string
+	Verbose    *bool
+	SVG        *bool
+	Prints     *bool
+	Layouts    *bool
+	CStrings   *bool
+	Details    *bool
+	OutputFile *string
 }
 
 var cli_args Flags
@@ -39,6 +40,11 @@ func main() {
 	if *cli_args.SVG {
 		demo.WriteIntermissionSVG()
 	}
+
+	// write the demo structure back to a new file
+	if *cli_args.OutputFile != "" {
+		demo.WriteFile(*cli_args.OutputFile)
+	}
 }
 
 func init() {
@@ -49,6 +55,7 @@ func init() {
 	cli_args.Layouts = flag.Bool("l", false, "Output layouts")
 	cli_args.CStrings = flag.Bool("c", false, "Output Configstrings")
 	cli_args.Details = flag.Bool("d", false, "Show details about the demo after parsing")
+	cli_args.OutputFile = flag.String("o", "", "The output .dm2 file")
 	flag.Parse()
 
 	// manually change conflicting flags
