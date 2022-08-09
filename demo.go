@@ -18,12 +18,14 @@ const (
 )
 
 type ServerFrame struct {
-	Frame       FrameMsg
-	Playerstate PackedPlayer
-	Entities    [MaxEntities]PackedEntity
-	Strings     []ConfigString
-	Prints      []Print
-	Stuffs      []StuffText
+	Frame          FrameMsg
+	Playerstate    PackedPlayer
+	Entities       [MaxEntities]PackedEntity
+	Strings        []ConfigString
+	Prints         []Print
+	Stuffs         []StuffText
+	Layouts        []Layout
+	Centerprinters []CenterPrint
 }
 
 /**
