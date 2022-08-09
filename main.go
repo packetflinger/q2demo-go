@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 )
 
 type Flags struct {
@@ -11,6 +12,7 @@ type Flags struct {
 	Prints    *bool
 	Layouts   *bool
 	CStrings  *bool
+	Details   *bool
 }
 
 var cli_args Flags
@@ -23,10 +25,17 @@ func main() {
 
 	demo := DemoFile{}
 	demo.ParseDemo(*cli_args.InputFile)
-	//fmt.Printf("Map: %s (%s)\n", demo.Serverdata.MapName, demo.Configstrings[CSMapname].String)
-	//fmt.Printf("Frames: %d\n", len(demo.Frames))
 
-	//demo.WriteFile(demo.Filename + ".2")
+	if *cli_args.Details {
+		framecount := len(demo.Frames)
+		mins := int(framecount / 10 / 60)
+		secs := int((framecount / 10) - (mins * 60))
+		fmt.Printf("Map: %s (%s)\n", demo.Serverdata.MapName, demo.Configstrings[CSMapname].String)
+		fmt.Printf("POV Entity: %d\n", demo.Serverdata.ClientNumber)
+		fmt.Printf("Frames Count: %d\n", framecount)
+		fmt.Printf("Length: %02d:%02d\n", mins, secs)
+	}
+
 	if *cli_args.SVG {
 		demo.WriteIntermissionSVG()
 	}
@@ -39,11 +48,13 @@ func init() {
 	cli_args.Prints = flag.Bool("p", false, "Output prints (console log)")
 	cli_args.Layouts = flag.Bool("l", false, "Output layouts")
 	cli_args.CStrings = flag.Bool("c", false, "Output Configstrings")
+	cli_args.Details = flag.Bool("d", false, "Show details about the demo after parsing")
 	flag.Parse()
 
-	// don't double output prints
+	// manually change conflicting flags
 	if *cli_args.Verbose {
 		*cli_args.Prints = false
 		*cli_args.CStrings = false
+		*cli_args.Layouts = false
 	}
 }
