@@ -57,7 +57,6 @@ func OpenDemo(filename string) *os.File {
 	f, err := os.Open(filename)
 	check(err)
 
-	fmt.Println("Demo file:", filename)
 	return f
 }
 
