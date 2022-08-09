@@ -26,6 +26,10 @@ type ServerFrame struct {
 	Stuffs         []StuffText
 	Layouts        []Layout
 	Centerprinters []CenterPrint
+	Sounds         []PackedSound
+	TempEntities   []TemporaryEntity
+	Flash1         []MuzzleFlash
+	Flash2         []MuzzleFlash
 }
 
 /**
@@ -143,28 +147,35 @@ func ParseLump(lump []byte, demo *DemoFile) {
 			}
 
 		case SVCPrint:
-			_ = buf.ParsePrint()
+			p := buf.ParsePrint()
+			currentframe.Prints = append(currentframe.Prints, p)
 
 		case SVCSound:
-			_ = buf.ParseSound()
+			s := buf.ParseSound()
+			currentframe.Sounds = append(currentframe.Sounds, s)
 
 		case SVCTempEntity:
-			_ = buf.ParseTempEntity()
+			te := buf.ParseTempEntity()
+			currentframe.TempEntities = append(currentframe.TempEntities, te)
 
 		case SVCMuzzleFlash:
-			_ = buf.ParseMuzzleFlash()
+			mf := buf.ParseMuzzleFlash()
+			currentframe.Flash1 = append(currentframe.Flash1, mf)
 
 		case SVCMuzzleFlash2:
-			_ = buf.ParseMuzzleFlash()
+			mf := buf.ParseMuzzleFlash()
+			currentframe.Flash2 = append(currentframe.Flash2, mf)
 
 		case SVCLayout:
-			_ = buf.ParseLayout()
+			layout := buf.ParseLayout()
+			currentframe.Layouts = append(currentframe.Layouts, layout)
 
 		case SVCInventory:
 			buf.ParseInventory()
 
 		case SVCCenterPrint:
-			_ = buf.ParseCenterPrint()
+			c := buf.ParseCenterPrint()
+			currentframe.Centerprinters = append(currentframe.Centerprinters, c)
 
 		default:
 			fmt.Printf("Unknown CMD: %d\n%s\n", cmd, hex.Dump(buf.Buffer[buf.Index-1:]))

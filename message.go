@@ -925,7 +925,6 @@ func (m *MessageBuffer) ParseMuzzleFlash() MuzzleFlash {
 func (m *MessageBuffer) ParseLayout() Layout {
 	layout := Layout{}
 	layout.Data = m.ReadString()
-	currentframe.Layouts = append(currentframe.Layouts, layout)
 
 	if *cli_args.Verbose {
 		fmt.Printf(" * Layout\n")
@@ -954,7 +953,6 @@ func (m *MessageBuffer) ParseInventory() {
 func (m *MessageBuffer) ParseCenterPrint() CenterPrint {
 	c := CenterPrint{}
 	c.Data = m.ReadString()
-	currentframe.Centerprinters = append(currentframe.Centerprinters, c)
 
 	if *cli_args.Verbose {
 		fmt.Printf(" * CenterPrint\n")
